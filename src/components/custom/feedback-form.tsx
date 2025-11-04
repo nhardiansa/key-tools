@@ -13,13 +13,22 @@ type RatingValue = 1 | 2 | 3 | 4
 const emojis = ["😢", "😐", "😊", "😍"]
 const emojiLabels = ["Very Bad", "Okay", "Good", "Excellent"]
 
-const COLECTION_ID = "key-8-2025"
+export const COLECTION_ID = "key-8-2025"
 
 interface RatingQuestionProps {
   question: string
   value: RatingValue | null
   onChange: (val: RatingValue) => void
   isOptional?: boolean
+}
+
+export interface FeedbackData {
+  experienceRating: RatingValue | null
+  hangoutRating: RatingValue | null
+  mentorshipRating: RatingValue | null
+  futureClassRating: RatingValue | null
+  additionalFeedback: string
+  createdAt: string
 }
 
 export default function FeedbackForm() {
@@ -45,15 +54,16 @@ export default function FeedbackForm() {
 
     setIsLoading(true)
 
-    addDoc(collection(db, COLECTION_ID), {
+    const finalData: FeedbackData = {
       ...formData,
-      // Humanize the date like November 1, 2023
       createdAt: new Date().toLocaleString("en-US", {
         month: "long",
         day: "numeric",
         year: "numeric",
       })
-    }).then((e) => {
+    }
+
+    addDoc(collection(db, COLECTION_ID), finalData).then((e) => {
 
       console.log(e)
 
