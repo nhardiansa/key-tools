@@ -131,11 +131,13 @@ export default function FeedbackForm() {
         {emojis.map((emoji, index) => {
           const rating = (index + 1) as RatingValue
           return (
+
+            // make emoji grey if not selected
             <button
               key={index}
               onClick={() => onChange(rating)}
-              className={`text-5xl transition-transform duration-200 hover:cursor-pointer ${value === rating ? "scale-125" : "hover:scale-110"
-                }`}
+              className={`text-5xl transition-transform duration-200 hover:cursor-pointer ${value === rating ? "scale-125  filter-none" : "hover:scale-110"
+                } grayscale`}
               title={emojiLabels[index]}
               type="button"
             >
