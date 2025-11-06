@@ -62,13 +62,25 @@ export default function FeedbackForm() {
         month: "long",
         day: "numeric",
         year: "numeric",
-      })
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
     }
+
 
 
     try {
       // 1️⃣ Ringkas teks pakai Gemini
-      const summaryText = await summarizeText(finalData.additionalFeedback);
+      let summaryText: string | undefined = "";
+
+      // make development mode not use summarize function for efficiency API usage
+      if (import.meta.env.DEV) {
+        summaryText = "Feedback mode development";
+      } else {
+        summaryText = await summarizeText(finalData.additionalFeedback);
+      }
+
       finalData.title = summaryText;
     } catch (error) {
       console.error("Error generating summary:", error);
@@ -76,6 +88,7 @@ export default function FeedbackForm() {
     } finally {
       setIsLoading(false);
     }
+
 
     addDoc(collection(db, COLECTION_ID), finalData).then((e) => {
 
