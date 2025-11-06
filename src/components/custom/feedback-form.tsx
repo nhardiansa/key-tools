@@ -31,6 +31,28 @@ export interface FeedbackData {
   additionalFeedback: string
   createdAt: string
   title?: string
+  averageRating?: number
+}
+
+function averageRating(ratings: number[]) {
+
+  // convert to scale of 1-4 to 0-1
+  const total: number[] = ratings.map(rating => {
+    if (rating === 1) return 0;
+    if (rating === 2) return 0.33;
+    if (rating === 3) return 0.66;
+    if (rating === 4) return 1;
+    return 0;
+  });
+
+  // calculate average
+  const sum = total.reduce((acc, curr) => acc + curr, 0);
+  const avg = sum / ratings.length;
+
+  // convert back to scale of 1-5
+  const result = avg * 5;
+
+  return Math.round(result);
 }
 
 export default function FeedbackForm() {
@@ -56,6 +78,13 @@ export default function FeedbackForm() {
 
     setIsLoading(true)
 
+    const avgRating = averageRating([
+      formData.experienceRating || 0,
+      formData.hangoutRating || 0,
+      formData.mentorshipRating || 0,
+      formData.futureClassRating || 0,
+    ]);
+
     const finalData: FeedbackData = {
       ...formData,
       createdAt: new Date().toLocaleString("en-US", {
@@ -66,6 +95,7 @@ export default function FeedbackForm() {
         minute: "2-digit",
         second: "2-digit",
       }),
+      averageRating: avgRating,
     }
 
 
