@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent } from "@/components/ui/card"
 // import { Button } from "@/components/ui/button"
-import { ArrowUpDown, Search, Star } from "lucide-react"
+import { Search, Star } from "lucide-react"
 import { useEffect, useState } from 'react'
 import { COLECTION_ID, type FeedbackData } from '@/components/custom/feedback-form'
 import { db } from '@/lib/firebase'
 import { collection, getDocs, orderBy, query } from 'firebase/firestore'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
+// import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const Route = createFileRoute('/reviews')({
   component: RouteComponent,
@@ -20,7 +20,7 @@ function RouteComponent() {
   const [feedbacks, setFeedbacks] = useState<Array<FeedbackResponse>>([]);
 
   // Filter and Sort states
-  const [sortBy, setSortBy] = useState<"recent" | "oldest" | "rating-high" | "rating-low">("recent")
+  // const [sortBy, setSortBy] = useState<"recent" | "oldest" | "rating-high" | "rating-low">("recent")
   const [searchQuery, setSearchQuery] = useState("")
   // const [selectedRating, setSelectedRating] = useState<number | null>(null)
 
@@ -34,9 +34,27 @@ function RouteComponent() {
     setFeedbacks(docs);
   };
 
+  const searchFeedbacks = (query: string) => {
+    return feedbacks.filter((feedback) =>
+      feedback.title?.toLowerCase().includes(query.toLowerCase()) ||
+      feedback.additionalFeedback?.toLowerCase().includes(query.toLowerCase())
+    );
+  }
+
   useEffect(() => {
     getFeedbacks();
   }, []);
+
+  useEffect(() => {
+
+    if (searchQuery) {
+      const results = searchFeedbacks(searchQuery);
+      setFeedbacks(results);
+    } else {
+      getFeedbacks();
+    }
+
+  }, [searchQuery]);
 
   return (
     <main className="min-h-screen bg-gray-50 p-4 sm:p-8">
@@ -86,7 +104,7 @@ function RouteComponent() {
             </div> */}
 
             {/* Sort */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <ArrowUpDown size={18} className="text-gray-600" />
 
               <Select onValueChange={value => setSortBy(value as "recent" | "oldest" | "rating-high" | "rating-low")}>
@@ -103,13 +121,13 @@ function RouteComponent() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
           </div>
 
           {/* Results count */}
-          <p className="text-sm text-gray-600">
+          {/* <p className="text-sm text-gray-600">
             Showing 3 of 3 reviews
-          </p>
+          </p> */}
         </div>
 
         {/* Reviews Section */}
